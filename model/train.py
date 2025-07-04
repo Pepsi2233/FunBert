@@ -71,8 +71,7 @@ class TransformerEncoder(nn.Module):
         )
 
     def forward(self, src):
-        # 转置源张量到 [seq_len, batch_size, hidden_size]
-        src = src.permute(1, 0, 2)
+        src = src.permute(1, 2, 0)
         output = self.transformer_encoder(src)
         return output
 
@@ -107,7 +106,6 @@ class MyModel(nn.Module):
         return x
 
 
-# 训练和验证函数
 def train_and_validate(model, train_loader, val_loader, num_epochs, lr):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=0.01)
