@@ -1,12 +1,10 @@
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = '1'
 
-# 在目等级上进行分类
 import pandas as pd
 import os
 
 
-# 读取fasta文件并转换为DataFrame
 def fasta_to_dataframe(fasta_file):
     sequences = {'Header': [], 'Sequence': []}
     with open(fasta_file, 'r') as f:
@@ -28,14 +26,12 @@ def fasta_to_dataframe(fasta_file):
     return pd.DataFrame(sequences)
 
 
-# 分类并移除包含 'Incertae_sedis' 的序列数据
 def classify_sequences(df):
     df['Class'] = df['Header'].apply(lambda x: x.split(';')[2].split('__')[1])
     df_filtered = df[~df['Class'].str.contains('Incertae_sedis')]
     return df_filtered
 
 
-# 新建目录存储按目分类的csv文件
 def save_to_directory(df, output_folder):
     os.makedirs(output_folder, exist_ok=True)
     class_s = df['Class'].unique()
@@ -45,22 +41,17 @@ def save_to_directory(df, output_folder):
         class_df.to_csv(output_file, index=False)
 
 
-# 主函数
+# main function
 def process_fasta_file(fasta_file, output_folder):
-    # 读取fasta文件并转换为DataFrame
     df = fasta_to_dataframe(fasta_file)
 
-    # 分类并移除包含 'Incertae_sedis' 的序列数据
     df_filtered = classify_sequences(df)
     print(df_filtered)
 
-    # 新建目录存储按目分类的csv文件
     save_to_directory(df_filtered, output_folder)
 
 
-# 输入fasta文件名和输出文件夹名
-fasta_file = "fileName"
+fasta_file = "fileName.fasta"
 output_folder = "Class"
 
-# 处理fasta文件
 process_fasta_file(fasta_file, output_folder)
